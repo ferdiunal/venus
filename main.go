@@ -10,6 +10,11 @@ type Venus struct {
 	hashid *hashids.HashID
 }
 
+type VenusInterface interface {
+	Decode(data string) int64
+	Encode(data int64) string
+}
+
 func (v *Venus) init() *Venus {
 	hd := hashids.NewData()
 	hd.Salt = v.Salt
@@ -22,7 +27,7 @@ func (v *Venus) init() *Venus {
 
 }
 
-func (v *Venus) DecodeInt64(data string) int64 {
+func (v *Venus) Decode(data string) int64 {
 	decoded, err := v.hashid.DecodeInt64WithError(data)
 	if err != nil || err == nil && len(decoded) == 0 {
 		return 0
@@ -37,7 +42,7 @@ func (v *Venus) Encode(data int64) string {
 	return hash
 }
 
-func New(salt string, len int) *Venus {
+func New(salt string, len int) VenusInterface {
 	venus := &Venus{
 		Salt: salt,
 		Len:  len,
